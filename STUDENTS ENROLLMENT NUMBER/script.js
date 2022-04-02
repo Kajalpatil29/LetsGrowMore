@@ -1,143 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
+var form = document.querySelector("#userForm");
+const allUsersData = [];
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <script defer src="script.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous" />
-    <title>Student Enrollment Form</title>
-</head>
+// ------------------function to reset the form------------------
+const resetForm = function () {
+  form.classList.remove('was-validated')
+  const name = document.getElementById('name');
+  name.value = "";
 
-<body>
-    <div class="nav-bar d-flex">
-        <h2>STUDENT ENROLLMENT FORM</h2>
-    </div>
+  const email = document.getElementById('email');
+  email.value = "";
 
-    <div class="students row">
+  const website = document.getElementById('website');
+  website.value = "";
 
-        <div class="enroll-student col-md">
+  const image = document.getElementById('image');
+  image.value = "";
 
-            <form action="" id="userForm" class="main-form form-check needs-validation" novalidate>
-                <div class="form-group row">
-                    <label for="name" class="col-sm-2 col-form-label">Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" minlength="4" id="name" required />
-                        <div class="invalid-feedback">*Please enter your name(min-lenght is 4).</div>
+  const genderEl = document.querySelectorAll('input[name="gender"]');
+  for (const rb of genderEl) {
+    rb.checked = false;
+  }
 
-                    </div>
-                </div>
+  const skillEl = document.querySelectorAll('input[name="skill"]');
+  for (const rb of skillEl) {
+    rb.checked = false;
+  }
+};
 
-                <div class="form-group row">
-                    <label for="email" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" required />
-                        <div class="invalid-feedback">*Please enter  valid email address.</div>
-                    </div>
-                </div>
+// --------------------function to get the data of the form----------------------
 
-                <div class="form-group row">
-                    <label for="website" class="col-sm-2 col-form-label">Website</label>
-                    <div class="col-sm-10">
-                        <input type="url" class="form-control" id="website" required />
-                        <div class="invalid-feedback">*Please enter valid link for your website.</div>
-                    </div>
-                </div>
+const getData = function () {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const website = document.getElementById('website').value;
+  const image = document.getElementById('image').value;
+  let gender;
+  let skills = [];
 
-                <div class="form-group row">
-                    <label for="image" class="col-sm-2 col-form-label">Image link</label>
-                    <div class="col-sm-10">
-                        <input type="url" class="form-control" id="image" required />
-                        <div class="invalid-feedback">*Please enter valid link for your image(link should be from public
-                            account for ex.FB,Insta etc)</div>
-                    </div>
-                </div>
+  const genderEl = document.querySelectorAll('input[name="gender"]');
+  for (const rb of genderEl) {
+    if (rb.checked) {
+      gender = rb.value;
+      break;
+    }
+  };
 
-                <fieldset class="form-group row">
-                    <legend class="col-form-label col-sm-2 float-sm-left pt-0">
-                        Gender
-                    </legend>
-                    <div class="col-sm-10">
-                        <div class="form-check ">
-                            <input class="form-check-input" type="radio" name="gender" id="male" value="Male"
-                                required />
-                            <label class="form-check-label" for="male">
-                                Male
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" id="female" value="Female" />
-                            <label class="form-check-label" for="female">
-                                Female
-                            </label>
-                            &nbsp;
-                            <div class="invalid-feedback">
-                                *(Please select at least One.)
-                            </div>
-                        </div>
+  const skillEl = document.querySelectorAll('input[name="skill"]');
+  for (const rb of skillEl) {
+    if (rb.checked) {
+      skills.push(rb.value);
+    }
+  }
+  return { name, email, website, image, gender, skills };
+};
 
-                    </div>
-                </fieldset>
+//-----------------------adding event listner to the "enroll student" button with type submit to submit the form
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  if (form.checkValidity()) {
+    const data = getData();
+    allUsersData.push(data);
+    printResult(data);
+    resetForm();
 
 
+  } else {
+    form.classList.add('was-validated');
+  };
+  removeSpan();
+});
 
-                <fieldset class="form-group row">
-                    <legend class="col-form-label col-sm-2 float-sm-left pt-0">
-                        Skills
-                    </legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="skill" id="java" value="Java"/>
-                            <label class="form-check-label" for="java">
-                                Java
-                            </label>
-                            &nbsp;
-                            <div class="invalid-feedback">
-                                *(Please make sure that this Box is Checked.)
-                            </div>
-                        </div>
+// --------------function to remove the span tag ("fill the form to enroll the students")
 
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="skill" id="html" value="HTML"/>
-                            <label class="form-check-label" for="html">
-                                HTML
-                            </label>
-                            &nbsp;
-                            <div class="invalid-feedback">
-                                *(Please make sure that this Box is Checked.)
-                            </div>
-                        </div>
+function removeSpan() {
+  var span = document.getElementById("span");
+  if(span){
+    span.remove();
+  }
+  
+};
 
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="skill" id="css" value="CSS"/>
-                            <label class="form-check-label" for="css">
-                                CSS
-                            </label>
-                            &nbsp;
-                            <div class="invalid-feedback">
-                                *(Please make sure that this Box is Checked.))
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
+// ------------------function to print the form data in the right side of div by genrating html elments inside the div.
 
-                <button type="submit" class="btn btn-primary">Enroll Student</button> &nbsp; &nbsp; &nbsp;
-                <button type="reset" class="btn btn-danger">Cancel</button>
-            </form>
-        </div>
+function printResult(data) {
+  const resultEl = document.getElementById('enrolled-students');
+  let sectionHeading = null;
+  if (allUsersData.length == 1) {
 
-        <hr class="seperation-border" />
+    sectionHeading = document.createElement('div');
+    const description = document.createElement('p');
+    description.innerHTML = "Description";
+    description.className = "description";
 
-        <div id="enrolled-students" class="col-md col-12">
-            <div class="enroll-heading">
-                <h2>Enrolled Students</h2>
-            </div>
-            <span id="span">*Fill the form to Enroll the Students.</span>
-        </div>
-    </div>
-</body>
+    const image = document.createElement('p');
+    image.innerHTML = "Image"
+    image.className = "Image";
 
-</html>
+    sectionHeading.className = "sectionHeading";
+    sectionHeading.append(description, image);
+  };
+
+  const wrapper = document.createElement('div');
+  wrapper.className = "wrapper";
+  wrapper.addEventListener('click', function (e) {
+    console.log(e.target.className);
+    if (e.target.className.includes('userDeleteBtn')) {
+      console.log('aaadfasdfasdf');
+      e.currentTarget.remove();
+    }
+
+  });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.innerHTML = "+";
+  deleteBtn.className = "userDeleteBtn";
+
+  const textInfoContainer = document.createElement('div');
+  textInfoContainer.className = "textInfoContainer";
+
+  const imageContainer = document.createElement('div');
+  imageContainer.className = "imageContainer";
+
+  const imageHyperlink = document.createElement('a');
+  imageHyperlink.href = data.image;
+  imageHyperlink.target = "_blank";
+
+
+  let name = document.createElement('p');
+  name.className = "infoText userName";
+  name.innerHTML = data.name;
+
+  let gender = document.createElement('p');
+  gender.className = "infoText gender";
+  gender.innerHTML = data.gender;
+
+  let email = document.createElement('p');
+  email.className = "infoText email";
+  email.innerHTML = data.email;
+
+  let website = document.createElement('a');
+  website.className = "infoText website";
+  website.innerHTML = data.website;
+  website.href = data.website;
+  website.target = "_blank";
+
+  let skills = document.createElement('p');
+  skills.className = "infoText skills";
+  skills.innerHTML = data.skills.join(', ');
+
+
+  let userImage = document.createElement('img');
+  userImage.className = "userImage";
+  userImage.src = data.image;
+
+
+  textInfoContainer.append(name, gender, email, website, skills);
+  imageHyperlink.appendChild(userImage);
+  imageContainer.appendChild(imageHyperlink);
+
+  wrapper.append(textInfoContainer, imageContainer, deleteBtn);
+
+  if (sectionHeading == null) {
+    resultEl.append(wrapper);
+  } else {
+    resultEl.append(sectionHeading, wrapper)
+  };
+
+};
